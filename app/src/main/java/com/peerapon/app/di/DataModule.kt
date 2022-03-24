@@ -14,17 +14,25 @@ import com.peerapon.data.repository.ArticleDetailRepositoryImpl
 import com.peerapon.data.source.ArticleRepositoryImpl
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class DataModule {
 
     @Singleton
     @Provides
     fun provideNinjatoHttpClient(): HttpClient {
-        return NinjatoOkHttpClient(OkHttpClient())
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BASIC
+        }).build()
+        return NinjatoOkHttpClient(okHttpClient)
     }
 
     @Singleton
@@ -55,7 +63,7 @@ class DataModule {
     @Singleton
     @Provides
     fun provideDatabase(
-        applicationContext: Context
+        @ApplicationContext applicationContext: Context
     ) = ArticleDatabase.getInstance(applicationContext)
 
     @Singleton

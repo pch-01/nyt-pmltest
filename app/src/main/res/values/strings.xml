@@ -2,7 +2,7 @@
     <string name="app_name">NYT Articles</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_activity_label">First Activity</string>
+    <string name="first_activity_label">Articles</string>
     <string name="detail_fragment_label">Detail Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -14,4 +14,9 @@
     <string name="weight_text">Weight: %s Kilograms</string>
     <string name="height_text">Height: %s Metres</string>
     <string name="base_exp_text">Base Exp: %s</string>
+    <string name="search">Search</string>
+    <string name="one_day">1 Day</string>
+    <string name="thirty_days">30 Days</string>
+    <string name="seven_days">7 Days</string>
+    <string name="period">Period</string>
 </resources>

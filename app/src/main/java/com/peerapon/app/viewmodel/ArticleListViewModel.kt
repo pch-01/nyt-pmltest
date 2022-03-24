@@ -1,47 +1,73 @@
 package com.peerapon.app.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.hilt.Assisted
+import androidx.lifecycle.*
 import com.peerapon.app.BuildConfig
 import com.peerapon.data.source.ArticleRepositoryImpl
 import com.peerapon.domain.contract.ArticleListViewState
+import com.peerapon.domain.contract.Period
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ArticleListViewModel @Inject constructor(
-    private val repositoryImpl: ArticleRepositoryImpl
+    private val repositoryImpl: ArticleRepositoryImpl,
+    @Assisted private val state: SavedStateHandle
 ) : ViewModel() {
 
-    private val _showError = MutableLiveData<Boolean>()
-    val showError: LiveData<Boolean> = _showError
+    companion object {
+        const val SEARCH_KEY = "query"
+    }
 
-    private val _showLoading = MutableLiveData<Boolean>()
-    val showLoading: LiveData<Boolean> = _showLoading
+    private var _uiState = MutableLiveData<List<ArticleListViewState>>(emptyList())
+    val queryState = state.getLiveData(SEARCH_KEY, "")
 
-    private val _showContent = MutableLiveData<Boolean>()
-
-    private val _uiState = MutableStateFlow<List<ArticleListViewState>>(emptyList())
-    val content: StateFlow<List<ArticleListViewState>> = _uiState
+    val filteredFlow = combine(
+        queryState.asFlow(),
+        _uiState.asFlow()
+    ) { query, currentState ->
+        if (query.isNotBlank() && query.isNotEmpty() && currentState != null) {
+            currentState.filter { it.title.contains(query, ignoreCase = true) }
+        } else {
+            currentState
+        }
+    }
+    val filteredContent: LiveData<List<ArticleListViewState>> = filteredFlow.asLiveData()
 
     init {
         viewModelScope.launch {
-           val deferred = async {
-               repositoryImpl.load(1, BuildConfig.API_KEY).map {
-                   ArticleListViewState(
-                       title = it.title,
-                       thumbnailUri = it.uri,
-                       id = it.id,
-                       url = it.url,
-                   )
-               }
-           }
-            _uiState.value = deferred.await()
+            load(Period.ONE_DAY, refresh = true)
         }
     }
 
+    suspend fun load(period: Period, refresh: Boolean = true) {
+        viewModelScope.launch {
+            val deferred = async {
+                kotlin.runCatching {
+                    getListArticle(refresh, period)
+                }
+            }
+            _uiState.value = deferred.await().getOrDefault(emptyList()).also {
+            }
+        }
+    }
+
+    private suspend fun getListArticle(
+        refresh: Boolean,
+        period: Period
+    ) = repositoryImpl.load(refresh, period.days, BuildConfig.API_KEY).map {
+        ArticleListViewState(
+            title = it.title,
+            thumbnailUri = it.uri,
+            id = it.id,
+            url = it.url,
+        )
+    }
+
+    fun onPeriodUpdate(period: Period) = viewModelScope.launch {
+        load(period, true)
+    }
 }

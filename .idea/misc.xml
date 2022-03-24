@@ -5,13 +5,16 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.13" />
+        <entry key="app/src/main/res/drawable/ic_search.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/detail_content_main.xml" value="0.12729187011718754" />
         <entry key="app/src/main/res/layout/error_view.xml" value="0.1421875" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.1421875" />
+        <entry key="app/src/main/res/layout/loading_view.xml" value="0.1" />
         <entry key="app/src/main/res/layout/recycler_item.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/menu_fragment.xml" value="0.2920333862304687" />
       </map>
     </option>
   </component>

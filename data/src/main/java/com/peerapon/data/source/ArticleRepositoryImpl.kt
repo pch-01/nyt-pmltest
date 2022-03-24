@@ -14,25 +14,29 @@ class ArticleRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : ArticleRepository {
 
-    override suspend fun load(period: Int, apiKey: String): List<ArticlesEntity> {
-        return withContext(ioDispatcher) {
-            val reponse = articleApi.getArticleList(
-                period = 1,
-                apiKey = apiKey,
-            )
+    private var cache: List<ArticlesEntity>? = null
 
-            if (reponse is Call.Success) {
-                val successResult = reponse.result.list
-                return@withContext successResult.apply {
-                    successResult.also {
+    override suspend fun load(refresh: Boolean, period: Int, apiKey: String): List<ArticlesEntity> {
+        return withContext(ioDispatcher) {
+            if (!refresh && cache != null && cache?.isNotEmpty() == true) {
+                return@withContext cache ?: emptyList()
+            } else {
+                val response = articleApi.getArticleList(
+                    period = period,
+                    apiKey = apiKey,
+                )
+
+                if (response is Call.Success) {
+                    val successResult = response.result.list
+                    cache = successResult
+                    return@withContext successResult.also {
                         articleListDao.insertAll(
                             mapToDbEntity(it, period)
                         )
                     }
+                } else {
+                    return@withContext emptyList()
                 }
-            } else {
-                val exceptionMessage = (reponse as? Call.Failure)?.throwable?.message
-                throw Exception("failure: $exceptionMessage")
             }
         }
     }

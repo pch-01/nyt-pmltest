@@ -1,38 +1,22 @@
 package com.peerapon.app.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.peerapon.app.viewmodel.ArticleDetailViewModel
-import com.peerapon.app.viewmodel.ArticleListViewModel
-import com.peerapon.app.viewmodel.factory.BaseViewModelFactory
-import dagger.Binds
-import dagger.MapKey
+import com.peerapon.data.repository.ArticleDetailRepository
+import com.peerapon.domain.interactor.ArticleDetailInteractor
+import com.peerapon.domain.interactor.ArticleDetailInteractorImpl
 import dagger.Module
-import dagger.multibindings.IntoMap
-import kotlin.reflect.KClass
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import kotlinx.coroutines.Dispatchers
 
+@InstallIn(ViewModelComponent::class)
 @Module
-abstract class ViewModelModule {
-    @Binds
-    abstract fun bindViewModelFactory(factory: BaseViewModelFactory): ViewModelProvider.Factory
+class ViewModelModule {
 
-    @Binds
-    @IntoMap
-    @ModelKey(ArticleListViewModel::class)
-    abstract fun bindListViewModel(viewModel: ArticleListViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ModelKey(ArticleDetailViewModel::class)
-    abstract fun bindDetailViewModel(viewModel: ArticleDetailViewModel): ViewModel
-
+    @Provides
+    fun provideArticleDetailInteractor(
+        articleDetailRepository: ArticleDetailRepository
+    ): ArticleDetailInteractor {
+        return ArticleDetailInteractorImpl(articleDetailRepository, Dispatchers.IO)
+    }
 }
-
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(AnnotationRetention.RUNTIME)
-@MapKey
-annotation class ModelKey(val value: KClass<out ViewModel>)

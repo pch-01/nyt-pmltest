@@ -8,27 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.peerapon.app.viewmodel.ArticleDetailViewModel
 import com.peerapon.domain.contract.ArticleDetail
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.detail_content_main.*
 import kotlinx.android.synthetic.main.error_view.*
 import kotlinx.android.synthetic.main.loading_view.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class ArticleDetailFragment : BottomSheetDialogFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private val args: ArticleDetailFragmentArgs by navArgs()
-
-    private val viewModel: ArticleDetailViewModel by viewModels { viewModelFactory }
+    private val viewModel: ArticleDetailViewModel by viewModels()
 
     override fun getTheme(): Int {
         return R.style.BottomSheetDialog
@@ -47,9 +42,7 @@ class ArticleDetailFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
-
-        viewModel.content.observe(this, profileObserver)
+        viewModel.content.observe(this, thumbnailObserver)
         viewModel.showError.observe(this, errorObserver)
         viewModel.showLoading.observe(this, loadingObserver)
 
@@ -62,7 +55,7 @@ class ArticleDetailFragment : BottomSheetDialogFragment() {
 
     }
 
-    private val profileObserver = Observer<ArticleDetail?> { detail ->
+    private val thumbnailObserver = Observer<ArticleDetail?> { detail ->
         if (detail == null) {
             contentViewGroup.visibility = View.GONE
         } else {
