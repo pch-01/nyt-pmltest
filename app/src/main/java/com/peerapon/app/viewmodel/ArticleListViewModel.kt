@@ -3,8 +3,8 @@ package com.peerapon.app.viewmodel
 import androidx.hilt.Assisted
 import androidx.lifecycle.*
 import com.peerapon.app.BuildConfig
-import com.peerapon.data.source.ArticleRepositoryImpl
 import com.peerapon.domain.contract.ArticleListViewState
+import com.peerapon.domain.contract.ArticleUseCase
 import com.peerapon.domain.contract.Period
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ArticleListViewModel @Inject constructor(
-    private val repositoryImpl: ArticleRepositoryImpl,
+    private val useCase: ArticleUseCase,
     @Assisted private val state: SavedStateHandle
 ) : ViewModel() {
 
@@ -24,8 +24,7 @@ class ArticleListViewModel @Inject constructor(
 
     private var _uiState = MutableLiveData<List<ArticleListViewState>>(emptyList())
     val queryState = state.getLiveData(SEARCH_KEY, "")
-
-    val filteredFlow = combine(
+    private val filteredFlow = combine(
         queryState.asFlow(),
         _uiState.asFlow()
     ) { query, currentState ->
@@ -46,25 +45,10 @@ class ArticleListViewModel @Inject constructor(
     suspend fun load(period: Period, refresh: Boolean = true) {
         viewModelScope.launch {
             val deferred = async {
-                kotlin.runCatching {
-                    getListArticle(refresh, period)
-                }
+                useCase.getListArticle(refresh, period, BuildConfig.API_KEY)
             }
-            _uiState.value = deferred.await().getOrDefault(emptyList()).also {
-            }
+            _uiState.value = deferred.await().getOrDefault(emptyList())
         }
-    }
-
-    private suspend fun getListArticle(
-        refresh: Boolean,
-        period: Period
-    ) = repositoryImpl.load(refresh, period.days, BuildConfig.API_KEY).map {
-        ArticleListViewState(
-            title = it.title,
-            thumbnailUri = it.uri,
-            id = it.id,
-            url = it.url,
-        )
     }
 
     fun onPeriodUpdate(period: Period) = viewModelScope.launch {

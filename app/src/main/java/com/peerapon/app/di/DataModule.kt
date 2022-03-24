@@ -11,6 +11,7 @@ import com.peerapon.data.api.ArticleDetailApiImpl
 import com.peerapon.data.db.dao.ArticleListDao
 import com.peerapon.data.repository.ArticleDetailRepository
 import com.peerapon.data.repository.ArticleDetailRepositoryImpl
+import com.peerapon.data.source.ArticleRepository
 import com.peerapon.data.source.ArticleRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -49,7 +50,7 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideArticleRepository(api: ArticleApi, dao: ArticleListDao): ArticleRepositoryImpl =
+    fun provideArticleRepository(api: ArticleApi, dao: ArticleListDao): ArticleRepository =
         ArticleRepositoryImpl(api, dao, Dispatchers.IO)
 
     @Singleton

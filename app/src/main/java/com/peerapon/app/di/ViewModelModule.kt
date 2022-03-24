@@ -1,6 +1,9 @@
 package com.peerapon.app.di
 
 import com.peerapon.data.repository.ArticleDetailRepository
+import com.peerapon.data.source.ArticleRepository
+import com.peerapon.domain.contract.ArticleUseCase
+import com.peerapon.domain.contract.ArticleUseCaseImpl
 import com.peerapon.domain.interactor.ArticleDetailInteractor
 import com.peerapon.domain.interactor.ArticleDetailInteractorImpl
 import dagger.Module
@@ -18,5 +21,12 @@ class ViewModelModule {
         articleDetailRepository: ArticleDetailRepository
     ): ArticleDetailInteractor {
         return ArticleDetailInteractorImpl(articleDetailRepository, Dispatchers.IO)
+    }
+
+    @Provides
+    fun provideArticleUseCase(
+        articleRepository: ArticleRepository
+    ): ArticleUseCase {
+        return ArticleUseCaseImpl(articleRepository)
     }
 }
