@@ -8,6 +8,8 @@ Consist two screen
 1. Detail
 2. List with ability to search and change period
 
+- Unit test on part of ViewModel (ArticleDetailViewModelTest), UseCase and Repository
+
 # Architecture and Stack
 - Using Clean architecture layer with MVVM (ViewModel, LiveData + Flow)
 - Mix of declarative UI (Jetpack Compose) + imperative on xml to show that this case will be happen
@@ -15,7 +17,6 @@ Consist two screen
 - Room DB
 - Detail Screen in Jetpack Compose
 - UI Test with Kakao
-- Unit test on ViewModel (ArticleDetailViewModelTest), UseCase and Repository
 - Hilt for Dependency Injection
 - GitHub Actions for running unit test as precheck
 
