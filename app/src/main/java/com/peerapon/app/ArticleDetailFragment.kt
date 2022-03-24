@@ -1,23 +1,20 @@
 package com.peerapon.app
 
 import android.app.Dialog
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.peerapon.app.ui.screen.ArticleDetailScreen
+import com.peerapon.app.ui.theming.AppTheme
 import com.peerapon.app.viewmodel.ArticleDetailViewModel
-import com.peerapon.domain.contract.ArticleDetail
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.detail_content_main.*
-import kotlinx.android.synthetic.main.error_view.*
-import kotlinx.android.synthetic.main.loading_view.*
 
 @AndroidEntryPoint
 class ArticleDetailFragment : BottomSheetDialogFragment() {
@@ -38,15 +35,18 @@ class ArticleDetailFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_second, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_second, container, false)
+        val composeView = view.findViewById<ComposeView>(R.id.compose_view)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel.content.observe(this, thumbnailObserver)
-        viewModel.showError.observe(this, errorObserver)
-        viewModel.showLoading.observe(this, loadingObserver)
-
-        super.onCreate(savedInstanceState)
+        composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    ArticleDetailScreen()
+                }
+            }
+        }
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,39 +54,5 @@ class ArticleDetailFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
     }
-
-    private val thumbnailObserver = Observer<ArticleDetail?> { detail ->
-        if (detail == null) {
-            contentViewGroup.visibility = View.GONE
-        } else {
-            contentViewGroup.visibility = View.VISIBLE
-
-            Glide.with(this)
-                .load(Uri.parse(detail.thumbnailUrl))
-                .into(thumbnailUrl)
-
-            titleTextView.text = detail.title
-            abstractTextView.text = detail.abstractText
-        }
-
-    }
-
-    private val loadingObserver = Observer<Boolean> { loading ->
-        if (loading) {
-            loadingView.visibility = View.VISIBLE
-        } else {
-            loadingView.visibility = View.GONE
-        }
-
-    }
-
-    private val errorObserver = Observer<Boolean> { error ->
-        if (error) {
-            errorViewGroup.visibility = View.VISIBLE
-        } else {
-            errorViewGroup.visibility = View.GONE
-        }
-    }
-
 
 }

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.peerapon.app.R
 import com.peerapon.domain.contract.ArticleListViewState
-import kotlinx.android.synthetic.main.recycler_item.view.*
 
 class ArticleListAdapter(
     diffUtilCallback: DiffUtil.ItemCallback<ArticleListViewState>
@@ -31,7 +30,7 @@ class ArticleListAdapter(
         itemView: View,
         private val launchDetailScreen: AdapterItemAction?
     ) : RecyclerView.ViewHolder(itemView) {
-        private val title: TextView = itemView.itemTitle
+        private val title: TextView = itemView.findViewById(R.id.itemTitle)
 
         fun bind(data: ArticleListViewState) {
             title.text = data.title
