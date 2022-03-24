@@ -3,7 +3,6 @@
 ![Screenshot_20220325_032326](https://user-images.githubusercontent.com/102327017/160009298-2178766c-75f3-42ff-8ead-388c517a5947.png)
 ![Screenshot_20220325_032410](https://user-images.githubusercontent.com/102327017/160009312-d6d6383f-15f2-47f6-99a1-63da7927ee52.png)
 
-
 ## To Build
 - Replace you API_KEY in `secret.properties` files located at root of project (this is why needed to pass key from view layer)
 
@@ -22,4 +21,3 @@ Consist two screen
 - Unit test on ViewModel (ArticleDetailViewModelTest), UseCase and Repository
 - Hilt for Dependency Injection
 - GitHub Actions for running unit test as precheck
-
