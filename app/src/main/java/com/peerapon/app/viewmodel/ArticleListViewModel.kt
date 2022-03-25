@@ -4,8 +4,8 @@ import androidx.hilt.Assisted
 import androidx.lifecycle.*
 import com.peerapon.app.BuildConfig
 import com.peerapon.domain.contract.ArticleListViewState
-import com.peerapon.domain.contract.ArticleUseCase
 import com.peerapon.domain.contract.Period
+import com.peerapon.domain.usecase.ArticleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.combine
