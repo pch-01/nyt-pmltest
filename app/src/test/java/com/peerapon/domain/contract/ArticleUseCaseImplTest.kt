@@ -4,6 +4,8 @@ import com.peerapon.data.api.entity.ArticlesEntity
 import com.peerapon.data.api.entity.MediaEntity
 import com.peerapon.data.api.entity.MediaMetadataEntity
 import com.peerapon.data.source.ArticleRepository
+import com.peerapon.domain.usecase.ArticleUseCase
+import com.peerapon.domain.usecase.ArticleUseCaseImpl
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
